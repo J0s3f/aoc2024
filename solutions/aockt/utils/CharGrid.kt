@@ -1,10 +1,12 @@
 package aockt.utils
 
-class CharGrid(private val data: Array<CharArray>) {
+class CharGrid(val data: Array<CharArray>) {
     val rowindices: IntRange
         get() = IntRange(0, data.lastIndex)
     val colindices: IntRange
         get() = IntRange(0, data[0].lastIndex)
+
+    constructor(data: List<CharArray>) : this(data.toTypedArray())
 
     operator fun get(rowindex: Int): CharArray {
         return data[rowindex]
@@ -24,6 +26,10 @@ class CharGrid(private val data: Array<CharArray>) {
 
     fun isValidPosition(pos: Pair<Int, Int>): Boolean {
         return pos.first in rowindices && pos.second in colindices
+    }
+
+    fun copy(): CharGrid {
+        return CharGrid(data.map { it.copyOf() }.toTypedArray())
     }
 
 
