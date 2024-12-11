@@ -1,7 +1,6 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
-import org.gradle.kotlin.dsl.KotlinClosure2
 
 plugins {
     kotlin("jvm") version "2.0.21"
@@ -23,6 +22,7 @@ sourceSets {
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -30,6 +30,7 @@ dependencies {
     val kotestVersion = "5.9.1"
 
     implementation("io.github.jadarma.aockt:aockt-core:$aocktVersion")
+    implementation("com.github.J0s3f:kotlin-range-sets:master-SNAPSHOT")
     testImplementation("io.github.jadarma.aockt:aockt-test:$aocktVersion")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
 }
@@ -50,11 +51,11 @@ tasks.test {
             with(result) {
                 println(
                     "\nResults: $resultType (" +
-                    "$testCount tests, " +
-                    "$successfulTestCount passed, " +
-                    "$failedTestCount failed, " +
-                    "$skippedTestCount skipped" +
-                    ")"
+                            "$testCount tests, " +
+                            "$successfulTestCount passed, " +
+                            "$failedTestCount failed, " +
+                            "$skippedTestCount skipped" +
+                            ")"
                 )
             }
         }))
