@@ -4,15 +4,20 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 
 plugins {
     kotlin("jvm") version "2.0.21"
+    kotlin("plugin.allopen") version "2.0.20"
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.13"
 }
 
-kotlin {
-    jvmToolchain(21)
+allOpen {
+    annotation("org.openjdk.jmh.annotations.State")
 }
 
 sourceSets {
     main.configure {
         kotlin.srcDir("$projectDir/solutions")
+    }
+    register("jvmBenchmark").configure {
+        kotlin.srcDir("$projectDir/benchmarks")
     }
     test.configure {
         kotlin.srcDir("$projectDir/tests")
@@ -20,9 +25,18 @@ sourceSets {
     }
 }
 
+kotlin {
+    jvmToolchain(21)
+    target {
+        compilations.getByName("jvmBenchmark")
+            .associateWith(compilations.getByName("main"))
+    }
+}
+
 repositories {
     mavenCentral()
     maven("https://jitpack.io")
+    gradlePluginPortal()
 }
 
 dependencies {
@@ -31,8 +45,25 @@ dependencies {
 
     implementation("io.github.jadarma.aockt:aockt-core:$aocktVersion")
     implementation("com.github.J0s3f:kotlin-range-sets:master-SNAPSHOT")
+    implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.13")
     testImplementation("io.github.jadarma.aockt:aockt-test:$aocktVersion")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+}
+
+benchmark {
+    targets {
+        register("jvmBenchmark")
+    }
+    configurations {
+        named("main") {
+            iterations = 5
+            warmups = 3
+            iterationTime = 15
+            iterationTimeUnit = "s"
+            mode = "avgt"
+            outputTimeUnit = "ms"
+        }
+    }
 }
 
 tasks.test {
