@@ -56,8 +56,8 @@ class CharGrid(val data: Array<CharArray>) : Iterable<PointVal> {
     override fun iterator(): Iterator<PointVal> {
         class PointValIterator(val grid: CharGrid) : Iterator<PointVal> {
 
-            var row = 0
-            var col = 0
+            private var row = 0
+            private var col = 0
 
             override fun hasNext(): Boolean {
                 return col <= grid.colindices.last && row <= grid.rowindices.last
@@ -83,8 +83,7 @@ class CharGrid(val data: Array<CharArray>) : Iterable<PointVal> {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as CharGrid
+        if (other !is CharGrid) return false
         if (this.rowindices != other.rowindices || this.colindices != other.colindices) {
             return false
         }
@@ -97,7 +96,7 @@ class CharGrid(val data: Array<CharArray>) : Iterable<PointVal> {
 
     override fun hashCode(): Int {
         var hash = 7
-        this.data.forEach { row -> hash = hash * 31 + row.contentHashCode() }
+        this.data.forEach { row -> hash = ((hash shl 5) - hash) + row.contentHashCode() }
         return hash
     }
 

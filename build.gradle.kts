@@ -35,7 +35,6 @@ kotlin {
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
     gradlePluginPortal()
 }
 
@@ -44,7 +43,7 @@ dependencies {
     val kotestVersion = "5.9.1"
 
     implementation("io.github.jadarma.aockt:aockt-core:$aocktVersion")
-    implementation("com.github.J0s3f:kotlin-range-sets:master-SNAPSHOT")
+    implementation("io.github.j0s3f.kotlin:rangesets:1.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.13")
     testImplementation("io.github.jadarma.aockt:aockt-test:$aocktVersion")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
