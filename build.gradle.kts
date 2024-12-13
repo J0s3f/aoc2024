@@ -49,6 +49,7 @@ dependencies {
     implementation("io.ksmt:ksmt-core:0.5.26")
     implementation("io.ksmt:ksmt-yices:0.5.26")
     implementation("io.ksmt:ksmt-yices-native-windows-x64:0.5.26")
+    implementation("io.ksmt:ksmt-yices-native-linux-x64:0.5.26")
     testImplementation("io.github.jadarma.aockt:aockt-test:$aocktVersion")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
 }

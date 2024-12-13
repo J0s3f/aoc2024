@@ -1,11 +1,16 @@
 package aockt.y2024
 
+import io.github.jadarma.aockt.core.Solution
 import io.github.jadarma.aockt.test.AdventDay
 import io.github.jadarma.aockt.test.AdventSpec
-import io.github.jadarma.aockt.test.ExecMode
 
-@AdventDay(2024, 13, "Claw Contraption")
-class Y2024D13Test : AdventSpec<Y2024D13Z3>({
+@AdventDay(2024, 13, "Claw Contraption", "Manual Implementation")
+class Y2024D13Test : Y2024D13Spec<Y2024D13>()
+
+@AdventDay(2024, 13, "Claw Contraption", "SMT Solver")
+class Y2024D13SMTTest : Y2024D13Spec<Y2024D13SMT>()
+
+abstract class Y2024D13Spec<T : Solution> : AdventSpec<T>({
     val ex1 = """
         Button A: X+94, Y+34
         Button B: X+22, Y+67

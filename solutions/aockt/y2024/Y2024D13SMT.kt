@@ -1,6 +1,5 @@
 package aockt.y2024
 
-import aockt.y2024.Y2024D13.Machine
 import io.github.jadarma.aockt.core.Solution
 import io.ksmt.KContext
 import io.ksmt.solver.KSolverStatus
@@ -12,7 +11,7 @@ import java.util.regex.Pattern
 import kotlin.time.Duration.Companion.seconds
 
 
-object Y2024D13Z3 : Solution {
+object Y2024D13SMT : Solution {
     override fun partOne(input: String): BigInteger {
         val machines = parseMachines(input)
 
