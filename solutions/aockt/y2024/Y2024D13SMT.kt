@@ -51,7 +51,7 @@ object Y2024D13SMT : Solution {
             val limB = b le 100.expr
 
 
-            KYicesSolver(this).use { solver -> // create a Z3 SMT solver instance
+            KYicesSolver(this).use { solver ->
                 solver.assert(xs)
                 solver.assert(ys)
                 if (limit) {
