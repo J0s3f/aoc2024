@@ -5,7 +5,7 @@ import io.github.jadarma.aockt.test.AdventSpec
 import io.github.jadarma.aockt.test.ExecMode
 
 @AdventDay(2024, 13, "Claw Contraption")
-class Y2024D13Test : AdventSpec<Y2024D13>({
+class Y2024D13Test : AdventSpec<Y2024D13Z3>({
     val ex1 = """
         Button A: X+94, Y+34
         Button B: X+22, Y+67

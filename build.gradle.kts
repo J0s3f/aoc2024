@@ -46,9 +46,9 @@ dependencies {
     implementation("io.github.j0s3f.kotlin:rangesets:1.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.13")
     // SMT core
-    implementation("io.ksmt:ksmt-core:0.5.23")
-    // z3 solver
-    implementation("io.ksmt:ksmt-z3:0.5.23")
+    implementation("io.ksmt:ksmt-core:0.5.26")
+    implementation("io.ksmt:ksmt-yices:0.5.26")
+    implementation("io.ksmt:ksmt-yices-native-windows-x64:0.5.26")
     testImplementation("io.github.jadarma.aockt:aockt-test:$aocktVersion")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
 }

@@ -4,7 +4,7 @@ import aockt.y2024.Y2024D13.Machine
 import io.github.jadarma.aockt.core.Solution
 import io.ksmt.KContext
 import io.ksmt.solver.KSolverStatus
-import io.ksmt.solver.z3.KZ3Solver
+import io.ksmt.solver.yices.KYicesSolver
 import io.ksmt.utils.getValue
 import io.ksmt.utils.toBigInteger
 import java.math.BigInteger
@@ -52,7 +52,7 @@ object Y2024D13Z3 : Solution {
             val limB = b le 100.expr
 
 
-            KZ3Solver(this).use { solver -> // create a Z3 SMT solver instance
+            KYicesSolver(this).use { solver -> // create a Z3 SMT solver instance
                 solver.assert(xs)
                 solver.assert(ys)
                 if (limit) {
