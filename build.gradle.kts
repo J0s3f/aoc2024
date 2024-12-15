@@ -3,8 +3,8 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 
 plugins {
-    kotlin("jvm") version "2.0.21"
-    kotlin("plugin.allopen") version "2.0.20"
+    kotlin("jvm") version "2.1.0"
+    kotlin("plugin.allopen") version "2.1.0"
     id("org.jetbrains.kotlinx.benchmark") version "0.4.13"
 }
 
@@ -50,6 +50,8 @@ dependencies {
     implementation("io.ksmt:ksmt-yices:0.5.26")
     implementation("io.ksmt:ksmt-yices-native-windows-x64:0.5.26")
     implementation("io.ksmt:ksmt-yices-native-linux-x64:0.5.26")
+    //output color
+    implementation("com.github.ajalt.mordant:mordant:3.0.1")
     testImplementation("io.github.jadarma.aockt:aockt-test:$aocktVersion")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
 }

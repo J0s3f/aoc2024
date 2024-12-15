@@ -81,6 +81,12 @@ class CharGrid(val data: Array<CharArray>) : Iterable<PointVal> {
         return PointValIterator(this)
     }
 
+    override fun toString(): String {
+        val sb = StringBuilder()
+        data.forEach { sb.append(it.concatToString()).append('\n') }
+        return sb.toString()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is CharGrid) return false
