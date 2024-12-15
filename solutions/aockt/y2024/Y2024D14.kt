@@ -3,7 +3,7 @@ package aockt.y2024
 import io.github.jadarma.aockt.core.Solution
 import java.util.regex.Pattern
 
-class Y2024D14 : Solution {
+object Y2024D14 : Solution {
     private val printResult = false
     override fun partOne(input: String): Int {
         val robots = parseRobots(input)
