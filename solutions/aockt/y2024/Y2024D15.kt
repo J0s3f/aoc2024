@@ -12,14 +12,13 @@ object Y2024D15 : Solution {
     private val t = if (DEBUG) Terminal(AnsiLevel.TRUECOLOR) else null
 
     override fun partOne(input: String): Int {
-        val (grid, robot, moves) = parseWarehouseInput(input, false)
-        val gpsSum = simulateWarehouse(grid, robot, moves)
-        return gpsSum
+        val warehouse = parseWarehouseInput(input, false)
+        return simulateWarehouse(warehouse)
     }
 
     override fun partTwo(input: String): Int {
-        val (grid, robot, moves) = parseWarehouseInput(input, scaled = true)
-        return simulateWarehouse(grid, robot, moves, isScaled = true)
+        val warehouse = parseWarehouseInput(input, scaled = true)
+        return simulateWarehouse(warehouse, isScaled = true)
     }
 
     enum class Direction(val delta: Pair<Int, Int>) {
@@ -76,11 +75,9 @@ object Y2024D15 : Solution {
     }
 
     private fun simulateWarehouse(
-        grid: CharGrid, robot: Point, moves: List<Direction>, isScaled: Boolean = false
+        warehouse: WarehouseInput, isScaled: Boolean = false
     ): Int {
-        val steps = mutableMapOf<Int, String>()
-        var step = 0
-
+        val (grid, robot, moves) = warehouse
         var robotPos = robot
 
         var moveNum = 0
@@ -101,22 +98,8 @@ object Y2024D15 : Solution {
                     when {
                         (isScaled && (move == Direction.UP || move == Direction.DOWN)) -> {
                             val currentPos = Direction.LEFT.move(newRobotPos)
-                            val boxesToMove = mutableListOf<Point>()
 
-                            findBoxes(grid, currentPos, boxesToMove, move)
-
-                            if (!boxesToMove.any {
-                                    !movePossible(
-                                        grid, boxesToMove, it, move
-                                    )
-                                }) {
-                                if (move == Direction.UP) {
-                                    boxesToMove.sortedByDescending { it.y }.forEach { moveBox(grid, it, move) }
-                                } else {
-                                    boxesToMove.sortedBy { it.y }.forEach { moveBox(grid, it, move) }
-                                }
-                                robotPos = newRobotPos
-                            }
+                            robotPos = grid.handleVerticalMove(currentPos, move, robotPos, newRobotPos)
                         }
 
                         (isScaled && move == Direction.LEFT) -> {
@@ -150,23 +133,8 @@ object Y2024D15 : Solution {
                 '[' -> {
                     when {
                         (isScaled && (move == Direction.UP || move == Direction.DOWN)) -> {
-                            var currentPos = newRobotPos
-                            val boxesToMove = mutableListOf<Point>()
 
-                            findBoxes(grid, currentPos, boxesToMove, move)
-
-                            if (!boxesToMove.any {
-                                    !movePossible(
-                                        grid, boxesToMove, it, move
-                                    )
-                                }) {
-                                if (move == Direction.UP) {
-                                    boxesToMove.sortedByDescending { it.y }.forEach { moveBox(grid, it, move) }
-                                } else {
-                                    boxesToMove.sortedBy { it.y }.forEach { moveBox(grid, it, move) }
-                                }
-                                robotPos = newRobotPos
-                            }
+                            robotPos = grid.handleVerticalMove(newRobotPos, move, robotPos, newRobotPos)
                         }
 
                         (isScaled && move == Direction.RIGHT) -> {
@@ -217,26 +185,58 @@ object Y2024D15 : Solution {
                 }
             }
             if (DEBUG) {
-                ++moveNum
-                if (moveNum >= moves.lastIndex) {
-                    t?.println("After Move $moveNum $move")
+                fun print() {
+                    t!!.println("After Move $moveNum $move")
                     grid.render(robotPos)
                 }
+                ++moveNum
+                if (moveNum >= moves.lastIndex) {
+                    print()
+                }
                 if (grid.boxCount() != boxCount) {
+                    print()
                     if (grid.boxCount() < boxCount) {
                         error("A box vanished in move $moveNum, ending")
                     }
                     error("A box appeared in move $moveNum, ending")
                 }
                 if (grid.hasError()) {
+                    print()
                     error("Error in Grid in move $moveNum, ending")
                 }
             }
         }
 
-        return grid.sumOf { (point, value) ->
-            if (value == 'O' || value == '[') 100 * (grid.rowindices.last - point.y) + point.x else 0
+        return grid.gpsValue()
+    }
+
+    private fun CharGrid.gpsValue() = this.sumOf { (point, value) ->
+        if (value == 'O' || value == '[') 100 * (this.rowindices.last - point.y) + point.x else 0
+    }
+
+    private fun CharGrid.handleVerticalMove(
+        currentPos: Point,
+        move: Direction,
+        pos: Point,
+        newRobotPos: Point
+    ): Point {
+        var robotPos = pos
+        val boxesToMove = findBoxes(this, currentPos, move)
+
+        if (boxesToMove.all {
+                movePossible(
+                    this, boxesToMove, it, move
+                )
+            }) {
+            if (move == Direction.UP) {
+                boxesToMove.sortedByDescending { it.y }
+            } else {
+                boxesToMove.sortedBy { it.y }
+            }.forEach { moveBox(it, move) }
+
+            robotPos = newRobotPos
         }
+        return robotPos
     }
 
     private fun CharGrid.boxCount(): Int {
@@ -245,11 +245,11 @@ object Y2024D15 : Solution {
     }
 
     private fun CharGrid.hasError(): Boolean {
-        val failRegex = "[^\\[]\\]|\\[[^\\]]".toRegex()
+        val failRegex = "[^\\[]]|\\[[^]]".toRegex()
         return this.data.any { failRegex.containsMatchIn(it.joinToString("")) }
     }
 
-    private fun movePossible(grid: CharGrid, boxesToMove: MutableList<Point>, box: Point, move: Direction): Boolean {
+    private fun movePossible(grid: CharGrid, boxesToMove: Set<Point>, box: Point, move: Direction): Boolean {
         val pos1 = move.move(box)
         val pos2 = Direction.RIGHT.move(pos1)
         if (grid[pos1] == '#' || grid[pos2] == '#') {
@@ -257,28 +257,29 @@ object Y2024D15 : Solution {
         }
         return boxesToMove.contains(pos1) || boxesToMove.contains(Direction.LEFT.move(pos1)) || boxesToMove.contains(
             Direction.RIGHT.move(pos1)
-        )
-                || (grid.isValidPosition(pos1) && grid.isValidPosition(pos2) && grid[pos1] == '.' && grid[pos2] == '.')
+        ) || (grid.isValidPosition(pos1) && grid.isValidPosition(pos2) && grid[pos1] == '.' && grid[pos2] == '.')
     }
 
-    private fun moveBox(grid: CharGrid, box: Point, move: Direction) {
+    private fun CharGrid.moveBox(box: Point, move: Direction) {
         val pos1 = move.move(box)
         val pos2 = Direction.RIGHT.move(pos1)
         val old2 = Direction.RIGHT.move(box)
-        grid[pos1] = '['
-        grid[pos2] = ']'
-        grid[box] = '.'
-        grid[old2] = '.'
+        this[pos1] = '['
+        this[pos2] = ']'
+        this[box] = '.'
+        this[old2] = '.'
     }
 
     private fun findBoxes(
-        grid: CharGrid, pos: Point, boxesToMove: MutableList<Point>, move: Direction
-    ) {
+        grid: CharGrid, pos: Point, move: Direction
+    ): Set<Point> {
+        val boxesToMove = mutableSetOf<Point>()
         addBox(pos, grid, boxesToMove, move)
+        return boxesToMove
     }
 
     private fun addBox(
-        currentPos: Point, grid: CharGrid, boxesToMove: MutableList<Point>, move: Direction
+        currentPos: Point, grid: CharGrid, boxesToMove: MutableSet<Point>, move: Direction
     ) {
         val rightTile = Point(currentPos.x + 1, currentPos.y)
         if (grid[currentPos] == '[' && grid.isValidPosition(rightTile) && grid[rightTile] == ']') {
