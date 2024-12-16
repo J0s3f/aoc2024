@@ -1,7 +1,18 @@
 package aockt.utils
 
-data class Point(val x: Int, val y: Int)
+data class Point(val x: Int, val y: Int) {
+    operator fun plus(other: Point): Point = Point(this.x + other.x, this.y + other.y)
+    operator fun plus(direction: Direction): Point = this + direction.point
+}
+
 data class PointVal(val point: Point, val value: Char)
+enum class Direction(val point: Point) {
+    UP(Point(0, 1)), RIGHT(Point(1, 0)), DOWN(Point(0, -1)), LEFT(Point(-1, 0));
+
+    fun rotateRight(steps: Int = 1): Direction = Direction.entries[(ordinal + steps).mod(Direction.entries.size)]
+    fun rotateLeft(steps: Int = 1): Direction = rotateRight(-steps)
+}
+
 
 class CharGrid(val data: Array<CharArray>) : Iterable<PointVal> {
     val rowindices: IntRange
@@ -67,7 +78,7 @@ class CharGrid(val data: Array<CharArray>) : Iterable<PointVal> {
                 val res = try {
                     val point = Point(col, row)
                     PointVal(point, grid[point])
-                } catch (e: IndexOutOfBoundsException) {
+                } catch (_: IndexOutOfBoundsException) {
                     throw NoSuchElementException()
                 }
                 ++col
@@ -86,6 +97,8 @@ class CharGrid(val data: Array<CharArray>) : Iterable<PointVal> {
         data.forEach { sb.append(it.concatToString()).append('\n') }
         return sb.toString()
     }
+
+    fun findChar(target: Char): Point? = firstOrNull { it.value == target }?.point
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -108,6 +121,7 @@ class CharGrid(val data: Array<CharArray>) : Iterable<PointVal> {
 
     companion object {
         fun fromString(data: String): CharGrid = CharGrid(data.trim().lines().map { it.trim().toCharArray() })
+        fun String.toGrid(): CharGrid = fromString(this)
     }
 
 }
