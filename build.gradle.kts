@@ -43,7 +43,7 @@ dependencies {
     val kotestVersion = "5.9.1"
 
     implementation("io.github.jadarma.aockt:aockt-core:$aocktVersion")
-    implementation("io.github.j0s3f.kotlin:rangesets:1.0.1")
+    implementation("io.github.j0s3f.kotlin:rangesets:1.0.2")
     implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.13")
     // SMT core
     implementation("io.ksmt:ksmt-core:0.5.26")
