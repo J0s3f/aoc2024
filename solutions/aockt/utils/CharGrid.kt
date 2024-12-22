@@ -46,10 +46,6 @@ class CharGrid(val data: Array<CharArray>) : Iterable<PointVal> {
         return row in rowindices && col in colindices
     }
 
-    fun isValidPosition(pos: Pair<Int, Int>): Boolean {
-        return pos.first in rowindices && pos.second in colindices
-    }
-
     fun isValidPosition(point: Point): Boolean {
         return (rowindices.last - point.y) in rowindices && point.x in colindices
     }

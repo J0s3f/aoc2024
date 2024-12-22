@@ -1,6 +1,7 @@
 package aockt.y2024
 
 import aockt.utils.CharGrid
+import aockt.utils.Point
 import aockt.utils.pairs
 import io.github.jadarma.aockt.core.Solution
 
@@ -31,48 +32,45 @@ object Y2024D08 : Solution {
         return CharGrid(input.lines().map { it.toCharArray() }.toTypedArray())
     }
 
-    private fun collectAntennaPositions(grid: CharGrid): Map<Char, MutableList<Pair<Int, Int>>> {
-        val positionsByFrequency = mutableMapOf<Char, MutableList<Pair<Int, Int>>>()
+    private fun collectAntennaPositions(grid: CharGrid): Map<Char, MutableList<Point>> {
+        val positionsByFrequency = mutableMapOf<Char, MutableList<Point>>()
 
-        for (y in grid.rowindices) {
-            for (x in grid[y].indices) {
-                val char = grid[y][x]
-                if (char.isLetterOrDigit()) {
-                    positionsByFrequency.computeIfAbsent(char) { mutableListOf() }.add(Pair(x, y))
-                }
+        for (pos in grid) {
+            if (pos.value.isLetterOrDigit()) {
+                positionsByFrequency.computeIfAbsent(pos.value) { mutableListOf() }.add(pos.point)
             }
         }
 
         return positionsByFrequency
     }
 
-    private fun CharGrid.antinodesFrom(a: Pair<Int, Int>, b: Pair<Int, Int>) = listOf(
-        Pair(
-            a.first + (b.first - a.first) * 2,
-            a.second + (b.second - a.second) * 2
+    private fun CharGrid.antinodesFrom(a: Point, b: Point) = listOf(
+        Point(
+            a.x + (b.x - a.x) * 2,
+            a.y + (b.y - a.y) * 2
         ),
-        Pair(
-            b.first + (a.first - b.first) * 2,
-            b.second + (a.second - b.second) * 2
+        Point(
+            b.x + (a.x - b.x) * 2,
+            b.y + (a.y - b.y) * 2
         )
     ).filter { this.isValidPosition(it) }
 
-    private fun CharGrid.resonantHarmonicAntinodesFrom(a: Pair<Int, Int>, b: Pair<Int, Int>): List<Pair<Int, Int>> {
-        val result = mutableListOf<Pair<Int, Int>>()
+    private fun CharGrid.resonantHarmonicAntinodesFrom(a: Point, b: Point): List<Point> {
+        val result = mutableListOf<Point>()
         var cur = b
         while (isValidPosition(cur)) {
             result.add(cur)
-            cur = Pair(
-                cur.first + b.first - a.first,
-                cur.second + b.second - a.second
+            cur = Point(
+                cur.x + b.x - a.x,
+                cur.y + b.y - a.y
             )
         }
         cur = a
         while (isValidPosition(cur)) {
             result.add(cur)
-            cur = Pair(
-                cur.first + a.first - b.first,
-                cur.second + a.second - b.second
+            cur = Point(
+                cur.x + a.x - b.x,
+                cur.y + a.y - b.y
             )
         }
         return result
