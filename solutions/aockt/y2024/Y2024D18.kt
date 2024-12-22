@@ -28,14 +28,14 @@ object Y2024D18 : Solution {
         val start = Point(0, 0)
         val end = Point(gridSize - 1, gridSize - 1)
 
-        bytes.forEachIndexed { index, (x, y) ->
+        bytes.forEach { (x, y) ->
             grid[y][x] = Corrupted(true)
             if (findShortestPath(grid, start, end) == null) {
                 return "$x,$y"
             }
         }
 
-        return "No blockage found"
+        error("No blockage found")
     }
 
     @JvmInline
@@ -45,17 +45,17 @@ object Y2024D18 : Solution {
 
     private fun parseInput(input: String): List<Point> {
         return input.lines().filter { it.isNotBlank() }.map { line ->
-                val (x, y) = line.split(",").map { it.trim().toInt() }
-                Point(x, y)
-            }
+            val (x, y) = line.split(",").map { it.trim().toInt() }
+            Point(x, y)
+        }
     }
 
     private fun findShortestPath(grid: Array<Array<Corrupted>>, start: Point, end: Point): Int? {
         val directions = listOf(
-            Point(0, 1),  // Down
-            Point(1, 0),  // Right
-            Point(0, -1), // Up
-            Point(-1, 0)  // Left
+            Point(0, 1),
+            Point(1, 0),
+            Point(0, -1),
+            Point(-1, 0)
         )
 
         val queue = LinkedList<Pair<Point, Int>>()
@@ -70,9 +70,11 @@ object Y2024D18 : Solution {
             if (current == end) return steps
 
             for (dir in directions) {
-                val neighbor = Point(current.x + dir.x, current.y + dir.y)
+                val neighbor = current + dir
 
-                if (neighbor.isValid(grid.size) && !grid[neighbor.y][neighbor.x].isCorrupted() && neighbor !in visited) {
+                if (neighbor.isValid(grid.size)
+                    && !grid[neighbor.y][neighbor.x].isCorrupted() && neighbor !in visited
+                ) {
                     queue.add(neighbor to steps + 1)
                     visited.add(neighbor)
                 }
