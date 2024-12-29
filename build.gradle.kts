@@ -50,6 +50,8 @@ dependencies {
     implementation("io.ksmt:ksmt-yices:0.5.26")
     implementation("io.ksmt:ksmt-yices-native-windows-x64:0.5.26")
     implementation("io.ksmt:ksmt-yices-native-linux-x64:0.5.26")
+    // z3
+    implementation("tools.aqua:z3-turnkey:4.13.4")
     //output color
     implementation("com.github.ajalt.mordant:mordant:3.0.1")
     testImplementation("io.github.jadarma.aockt:aockt-test:$aocktVersion")
